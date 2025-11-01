@@ -4,11 +4,13 @@
 
 ## Índice
 
-1. [Nomenclatura](#nomenclatura)
-2. [Estrutura de Pastas](#estrutura-de-pastas)
-3. [Organização de Código](#organização-de-código)
-4. [Boas Práticas](#boas-práticas)
-5. [Exemplos Práticos](#exemplos-práticos)
+1. [Nomenclatura](#1-nomenclatura)
+2. [Estrutura de Pastas](#2-estrutura-de-pastas)
+3. [Organização de Código](#3-organização-de-código)
+4. [Boas Práticas](#4-boas-práticas)
+5. [Exemplos Práticos](#5-exemplos-práticos)
+6. [CSS Classes](#6-css-classes)
+7. [Git e Versionamento](#7-git-e-versionamento)
 
 ---
 
@@ -53,14 +55,54 @@ toast.success('Aluno cadastrado com sucesso');
 | **Utilities** | camelCase | `formatDate.ts`, `validation.ts` |
 | **Pastas** | kebab-case | `student-form/`, `api-client/` |
 | **Constantes** | UPPER_SNAKE_CASE | `MAX_RETRY_ATTEMPTS` |
+| **Testes** | Nome do arquivo + `.test` ou `.spec` | `StudentForm.test.tsx`, `formatDate.spec.ts` |
 
 ---
 
-### 1.3 Métodos e Funções
+### 1.3 Variáveis e Funções
 
 **Regra:** Seguir convenção **camelCase** do JavaScript/TypeScript.
 
-#### ❌ Evitar
+#### Booleanos
+
+Use prefixos descritivos: `is`, `has`, `should`, `can`
+
+```typescript
+const isLoading = true;
+const hasPermission = false;
+const shouldUpdate = true;
+const canEdit = false;
+```
+
+#### Arrays
+
+Sempre usar plural:
+
+```typescript
+const users = [];
+const items = [];
+const products = [];
+const studentIds = [1, 2, 3];
+```
+
+#### Funções
+
+Usar verbos + substantivo:
+
+```typescript
+getUserById(id: string);
+createNewUser(data: User);
+updateUserProfile(id: string, data: Partial<User>);
+deleteOldRecords();
+validateEmail(email: string);
+fetchStudents();
+```
+
+#### Métodos de Classes
+
+**Regra:** Sempre **camelCase**, nunca PascalCase.
+
+##### ❌ Evitar
 ```typescript
 // Primeira letra maiúscula (não é padrão JS)
 class StudentService {
@@ -71,7 +113,7 @@ class StudentService {
 }
 ```
 
-#### ✅ Recomendado
+##### ✅ Recomendado
 ```typescript
 // camelCase padrão
 class StudentService {
@@ -1067,18 +1109,107 @@ export const studentService = {
 
 ---
 
+## 6. CSS Classes
+
+### 6.1 Metodologia BEM
+
+Use BEM (Block Element Modifier) para organização de classes CSS:
+
+```css
+.block {}
+.block__element {}
+.block--modifier {}
+
+/* Exemplos práticos */
+.card {}
+.card__title {}
+.card__body {}
+.card__footer {}
+.card--featured {}
+.card--disabled {}
+```
+
+### 6.2 Classes de Estado
+
+Para estados de componentes, use prefixos descritivos:
+
+```css
+.is-active {}
+.is-disabled {}
+.is-loading {}
+.is-visible {}
+.is-hidden {}
+.has-error {}
+.has-icon {}
+```
+
+**Exemplo React:**
+```tsx
+<button
+  className={`btn ${isLoading ? 'is-loading' : ''} ${hasError ? 'has-error' : ''}`}
+>
+  Submit
+</button>
+```
+
+---
+
+## 7. Git e Versionamento
+
+### 7.1 Branches
+
+Siga o padrão de nomenclatura:
+
+```
+feature/add-user-authentication
+feature/implement-dashboard
+bugfix/fix-login-redirect
+bugfix/correct-validation
+hotfix/patch-security-issue
+release/v1.2.0
+```
+
+### 7.2 Commits (Conventional Commits)
+
+Use o formato Conventional Commits:
+
+```
+feat: add user authentication
+fix: resolve login redirect issue
+docs: update README with new instructions
+style: format code with prettier
+refactor: simplify validation logic
+test: add unit tests for auth service
+chore: update dependencies
+```
+
+**Escopo opcional:**
+```
+feat(auth): add OAuth2 integration
+fix(api): handle timeout errors
+docs(readme): add installation guide
+```
+
+---
+
 ## Checklist de Revisão de Código
 
 Antes de abrir um Pull Request, verifique:
 
 - [ ] Todo código está em **inglês** (exceto textos de UI)
 - [ ] Nomenclatura seguindo convenções (PascalCase, camelCase, kebab-case)
+- [ ] Booleanos com prefixos `is`, `has`, `should`, `can`
+- [ ] Arrays no plural
+- [ ] Funções com verbos + substantivo
 - [ ] Não há uso de `any` sem justificativa
 - [ ] Tipos/interfaces em arquivos `.types.ts` separados
 - [ ] Erros tratados adequadamente (sem try-catch repetitivo)
 - [ ] Hooks customizados para lógica reutilizável
 - [ ] Componentes com responsabilidade única
 - [ ] Imports organizados (React → libs → internos)
+- [ ] Classes CSS seguindo BEM ou padrão de estados
+- [ ] Commits seguindo Conventional Commits
+- [ ] Branches com nomenclatura correta
 - [ ] Sem console.log em produção
 - [ ] Rotas organizadas por módulo (não centralizadas)
 
@@ -1094,4 +1225,4 @@ Antes de abrir um Pull Request, verifique:
 
 ---
 
-**Última atualização:** 10/10/2025 08:42
+**Última atualização:** 01/11/2025 13:14
