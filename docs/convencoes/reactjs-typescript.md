@@ -4,13 +4,13 @@
 
 ## Índice
 
-1. [Nomenclatura](#1-nomenclatura)
-2. [Estrutura de Pastas](#2-estrutura-de-pastas)
-3. [Organização de Código](#3-organização-de-código)
-4. [Boas Práticas](#4-boas-práticas)
-5. [Exemplos Práticos](#5-exemplos-práticos)
-6. [CSS Classes](#6-css-classes)
-7. [Git e Versionamento](#7-git-e-versionamento)
+1. [Nomenclatura](#nomenclatura)
+2. [Estrutura de Pastas](#estrutura-de-pastas)
+3. [Organização de Código](#organização-de-código)
+4. [Boas Práticas](#boas-práticas)
+5. [Exemplos Práticos](#exemplos-práticos)
+6. [CSS Classes](#css-classes)
+7. [Git e Versionamento](#git-e-versionamento)
 
 ---
 
