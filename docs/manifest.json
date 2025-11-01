@@ -39,27 +39,27 @@
 			]
 		},
 		{
-			"id": "padroes",
-			"title": "Padrões de Código",
+			"id": "convencoes",
+			"title": "Convenções e Regras",
 			"icon": "📝",
 			"docs": [
 				{
 					"id": "reactjs-typescript",
 					"title": "React + TypeScript",
-					"description": "Padrões e convenções completos para projetos React + TypeScript, incluindo nomenclatura, estrutura, CSS e Git",
-					"file": "padroes/reactjs-typescript.md"
+					"description": "Convenções e regras completas para projetos React + TypeScript, incluindo nomenclatura, estrutura, CSS e Git",
+					"file": "convencoes/reactjs-typescript.md"
 				},
 				{
 					"id": "css",
 					"title": "CSS/SCSS",
-					"description": "Padrões para estilização",
-					"file": "padroes/css.md"
+					"description": "Convenções para estilização",
+					"file": "convencoes/css.md"
 				},
 				{
 					"id": "golang",
 					"title": "Go",
-					"description": "Padrões e convenções para Go lang",
-					"file": "padroes/golang.md"
+					"description": "Convenções e regras para Go lang",
+					"file": "convencoes/golang.md"
 				}
 			],
 			"subcategories": []
