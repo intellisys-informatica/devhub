@@ -45,7 +45,7 @@ npm run dev
 
 ### Instalação Manual
 
-📥 **[Download do Script](https://raw.githubusercontent.com/intellisys-informatica/devhub/main/docs/ambiente/reactjs/assets/create-react-vite.sh)**
+📥 **[Download do Script](docs/ambiente/reactjs/assets/create-react-vite.sh)**
 
 📖 **[Instruções completas de instalação](./script-install.md)**
 

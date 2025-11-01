@@ -11,20 +11,14 @@ Este guia apresenta as ferramentas essenciais que você deve ter instaladas no s
 Use nosso script de instalação automática para configurar tudo de uma vez:
 
 ```bash
-# Baixar e executar o script
 curl -fsSL https://raw.githubusercontent.com/intellisys-informatica/devhub/main/docs/ambiente/assets/setup-dev.sh | bash
 ```
 
 **Ou baixe o script localmente:**
 
 ```bash
-# Baixar
 curl -fsSL https://raw.githubusercontent.com/intellisys-informatica/devhub/main/docs/ambiente/assets/setup-dev.sh -o setup-dev.sh
-
-# Tornar executável
 chmod +x setup-dev.sh
-
-# Executar
 ./setup-dev.sh
 ```
 
@@ -35,6 +29,8 @@ chmod +x setup-dev.sh
 
 **O que o script faz:**
 - ✅ Detecta automaticamente seu sistema operacional e shell
+- ✅ Instala ferramentas CLI essenciais (curl, wget, vim, jq, tree, htop)
+- ✅ Pergunta se deseja usar Zsh + Oh My Zsh + Starship (se ainda não estiver usando)
 - ✅ Instala todas as ferramentas necessárias
 - ✅ Configura Git e Git Flow
 - ✅ Configura Docker para iniciar com o sistema (Linux)
@@ -42,6 +38,7 @@ chmod +x setup-dev.sh
 - ✅ Instala Node.js LTS mais recente
 - ✅ Configura Go PATH corretamente (GOPATH em `~/.go`)
 - ✅ Pergunta suas credenciais Git se não estiverem configuradas
+- ✅ Configura chaves SSH para GitHub e servidores remotos
 
 ---
 
@@ -457,4 +454,4 @@ source ~/.bashrc  # ou source ~/.zshrc
 
 ---
 
-**Última atualização**: 2025-10-09
+**Última atualização:** 01/11/2025 12:00

@@ -67,6 +67,84 @@ detect_shell() {
     fi
 }
 
+# Install and configure Zsh
+install_zsh() {
+    CURRENT_SHELL=$(basename "$SHELL")
+
+    # Se já está usando Zsh, apenas verifica instalação
+    if [ "$CURRENT_SHELL" == "zsh" ]; then
+        print_info "Zsh já é o shell padrão"
+        SHELL_TYPE="zsh"
+        SHELL_RC="$HOME/.zshrc"
+        return
+    fi
+
+    # Pergunta se o usuário quer usar Zsh
+    print_header "Configuração do Shell"
+    echo -e "${YELLOW}Você está usando $CURRENT_SHELL${NC}"
+    read -r -p "Deseja instalar e usar Zsh? (s/n): " use_zsh < /dev/tty
+
+    if [[ ! "$use_zsh" =~ ^[Ss]$ ]]; then
+        print_info "Mantendo shell atual: $CURRENT_SHELL"
+        return
+    fi
+
+    print_header "Instalando Zsh"
+
+    if command_exists zsh; then
+        print_warning "Zsh já instalado: $(zsh --version)"
+    else
+        print_info "Instalando Zsh..."
+        sudo apt update
+        sudo apt install -y zsh
+        print_success "Zsh instalado: $(zsh --version)"
+    fi
+
+    # Install Oh My Zsh
+    if [ -d "$HOME/.oh-my-zsh" ]; then
+        print_warning "Oh My Zsh já instalado"
+    else
+        print_info "Instalando Oh My Zsh..."
+
+        # Install Oh My Zsh without changing shell automatically
+        RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+        print_success "Oh My Zsh instalado"
+    fi
+
+    # Install Starship
+    print_info "Instalando Starship..."
+    if command_exists starship; then
+        print_warning "Starship já instalado: $(starship --version)"
+    else
+        curl -sS https://starship.rs/install.sh | sh -s -- -y
+        print_success "Starship instalado: $(starship --version)"
+    fi
+
+    # Configure Starship in .zshrc
+    if grep -q "starship init zsh" "$HOME/.zshrc" 2>/dev/null; then
+        print_info "Starship já configurado no .zshrc"
+    else
+        print_info "Configurando Starship no .zshrc..."
+        echo '' >> "$HOME/.zshrc"
+        echo '# Starship prompt' >> "$HOME/.zshrc"
+        echo 'eval "$(starship init zsh)"' >> "$HOME/.zshrc"
+        print_success "Starship configurado no .zshrc"
+    fi
+
+    # Set Zsh as default shell
+    print_info "Configurando Zsh como shell padrão..."
+    sudo chsh -s "$(which zsh)" "$USER"
+    print_success "Zsh configurado como shell padrão"
+    print_warning "IMPORTANTE: Faça logout e login novamente para usar Zsh"
+
+    # Update shell type for this script
+    SHELL_TYPE="zsh"
+    SHELL_RC="$HOME/.zshrc"
+
+    print_success "Configuração Zsh + Oh My Zsh + Starship concluída"
+}
+
 # Show banner
 show_banner() {
     echo -e "${BLUE}"
@@ -84,7 +162,7 @@ ask_installation_type() {
     echo "2) Ferramentas essenciais + Go"
     echo "3) Tudo (Ferramentas essenciais + ReactJS + Go)"
     echo ""
-    read -p "Digite sua escolha (1-3): " choice
+    read -r -p "Digite sua escolha (1-3): " choice < /dev/tty
 
     case $choice in
         1)
@@ -153,12 +231,12 @@ configure_git() {
         print_header "Configuração do Git"
 
         if [ -z "$GIT_USER" ]; then
-            read -p "Digite seu nome completo: " git_name
+            read -r -p "Digite seu nome completo: " git_name < /dev/tty
             git config --global user.name "$git_name"
         fi
 
         if [ -z "$GIT_EMAIL" ]; then
-            read -p "Digite seu email do GitHub: " git_email
+            read -r -p "Digite seu email do GitHub: " git_email < /dev/tty
             git config --global user.email "$git_email"
         fi
 
@@ -246,6 +324,37 @@ install_vim() {
     print_success "vim instalado"
 }
 
+# Install additional CLI tools
+install_additional_tools() {
+    print_header "Instalando ferramentas CLI adicionais"
+
+    TOOLS=("jq" "tree" "htop" "wget")
+    MISSING_TOOLS=()
+
+    for tool in "${TOOLS[@]}"; do
+        if ! command_exists "$tool"; then
+            MISSING_TOOLS+=("$tool")
+        else
+            print_info "$tool já instalado"
+        fi
+    done
+
+    if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
+        print_info "Instalando: ${MISSING_TOOLS[*]}"
+        sudo apt install -y "${MISSING_TOOLS[@]}"
+
+        for tool in "${MISSING_TOOLS[@]}"; do
+            if command_exists "$tool"; then
+                print_success "$tool instalado"
+            else
+                print_error "Erro ao instalar $tool"
+            fi
+        done
+    else
+        print_success "Todas as ferramentas CLI já estão instaladas"
+    fi
+}
+
 # Install Node.js (LTS)
 install_nodejs() {
     print_header "Instalando Node.js LTS"
@@ -254,7 +363,7 @@ install_nodejs() {
         CURRENT_NODE=$(node --version)
         print_warning "Node.js já instalado: $CURRENT_NODE"
 
-        read -p "Deseja reinstalar a versão LTS? (s/n): " reinstall
+        read -r -p "Deseja reinstalar a versão LTS? (s/n): " reinstall < /dev/tty
         if [[ ! "$reinstall" =~ ^[Ss]$ ]]; then
             return
         fi
@@ -291,7 +400,7 @@ install_go() {
     if command_exists go; then
         print_warning "Go já instalado: $(go version)"
 
-        read -p "Deseja reinstalar? (s/n): " reinstall
+        read -r -p "Deseja reinstalar? (s/n): " reinstall < /dev/tty
         if [[ ! "$reinstall" =~ ^[Ss]$ ]]; then
             configure_go_path
             return
@@ -327,14 +436,29 @@ configure_go_path() {
     # Create GOPATH directory
     mkdir -p "$HOME/.go"
 
-    # Check if already configured
-    if grep -q "export GOPATH=" "$SHELL_RC" 2>/dev/null; then
-        print_info "Go PATH já configurado em $SHELL_RC"
+    # Determine which RC file to use based on installed shells and user choice
+    local TARGET_RC=""
+
+    # Check if Zsh is installed and configured
+    if command_exists zsh && [ -f "$HOME/.zshrc" ]; then
+        TARGET_RC="$HOME/.zshrc"
+        print_info "Detectado Zsh instalado, usando .zshrc"
+    elif [ -f "$HOME/.bashrc" ]; then
+        TARGET_RC="$HOME/.bashrc"
+        print_info "Usando .bashrc"
+    else
+        print_error "Nenhum arquivo RC encontrado"
+        return 1
+    fi
+
+    # Check if already configured in target RC
+    if grep -q "export GOPATH=" "$TARGET_RC" 2>/dev/null; then
+        print_info "Go PATH já configurado em $TARGET_RC"
         return
     fi
 
     # Add to shell RC
-    cat >> "$SHELL_RC" << 'EOF'
+    cat >> "$TARGET_RC" << 'EOF'
 
 # Go configuration
 export GOPATH=$HOME/.go
@@ -343,13 +467,9 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 EOF
 
     # Source the file
-    if [ "$SHELL_TYPE" == "zsh" ]; then
-        source "$HOME/.zshrc" 2>/dev/null || true
-    else
-        source "$HOME/.bashrc" 2>/dev/null || true
-    fi
+    source "$TARGET_RC" 2>/dev/null || true
 
-    print_success "Go PATH configurado em $SHELL_RC"
+    print_success "Go PATH configurado em $TARGET_RC"
     print_info "GOPATH: $HOME/.go"
     print_info "GOROOT: /usr/local/go"
 
@@ -366,6 +486,205 @@ EOF
     print_success "Ferramentas Go instaladas"
 }
 
+# Configure SSH keys
+configure_ssh() {
+    print_header "Configuração de Chaves SSH"
+
+    # Ensure .ssh directory exists
+    mkdir -p "$HOME/.ssh"
+    chmod 700 "$HOME/.ssh"
+
+    # Find existing SSH keys (private keys only)
+    local ssh_keys=()
+    while IFS= read -r key; do
+        ssh_keys+=("$key")
+    done < <(find "$HOME/.ssh" -maxdepth 1 -type f ! -name "*.pub" ! -name "config" ! -name "known_hosts" ! -name "authorized_keys" 2>/dev/null)
+
+    local num_keys=${#ssh_keys[@]}
+
+    if [ $num_keys -eq 0 ]; then
+        # Cenário 1: Nenhuma chave existe
+        print_info "Nenhuma chave SSH encontrada"
+        create_intellisys_key
+        create_ssh_config_github "$INTELLISYS_KEY"
+        show_public_key "$INTELLISYS_KEY"
+    elif [ $num_keys -eq 1 ]; then
+        # Cenário 2: Apenas uma chave
+        local key_name=$(basename "${ssh_keys[0]}")
+        print_info "Encontrada 1 chave SSH: $key_name"
+
+        read -r -p "Esta chave é da Intellisys? (s/n): " is_intellisys < /dev/tty
+
+        if [[ "$is_intellisys" =~ ^[Ss]$ ]]; then
+            INTELLISYS_KEY="${ssh_keys[0]}"
+            create_ssh_config_github "$INTELLISYS_KEY"
+            show_public_key "$INTELLISYS_KEY"
+        else
+            configure_existing_key "${ssh_keys[0]}"
+            create_intellisys_key
+            create_ssh_config_github "$INTELLISYS_KEY"
+            show_public_key "$INTELLISYS_KEY"
+        fi
+    else
+        # Cenário 3: Múltiplas chaves
+        print_info "Encontradas $num_keys chaves SSH:"
+        echo ""
+        for i in "${!ssh_keys[@]}"; do
+            echo "$((i+1))) $(basename "${ssh_keys[$i]}")"
+        done
+        echo "0) Nenhuma é da Intellisys"
+        echo ""
+
+        read -r -p "Qual destas chaves é da Intellisys? (0-$num_keys): " choice < /dev/tty
+
+        if [ "$choice" -eq 0 ]; then
+            # Nenhuma é da Intellisys
+            for key in "${ssh_keys[@]}"; do
+                configure_existing_key "$key"
+            done
+            create_intellisys_key
+            create_ssh_config_github "$INTELLISYS_KEY"
+            show_public_key "$INTELLISYS_KEY"
+        else
+            # Uma chave foi escolhida
+            local idx=$((choice-1))
+            INTELLISYS_KEY="${ssh_keys[$idx]}"
+
+            for i in "${!ssh_keys[@]}"; do
+                if [ $i -ne $idx ]; then
+                    configure_existing_key "${ssh_keys[$i]}"
+                fi
+            done
+
+            create_ssh_config_github "$INTELLISYS_KEY"
+            show_public_key "$INTELLISYS_KEY"
+        fi
+    fi
+
+    print_success "Configuração SSH concluída"
+}
+
+# Create Intellisys SSH key
+create_intellisys_key() {
+    print_info "Criando chave SSH da Intellisys..."
+
+    read -r -p "Digite seu e-mail @intellisys.com.br: " intellisys_email < /dev/tty
+
+    # Validate email
+    if [[ ! "$intellisys_email" =~ @intellisys\.com\.br$ ]]; then
+        print_warning "E-mail não termina com @intellisys.com.br, mas continuando..."
+    fi
+
+    INTELLISYS_KEY="$HOME/.ssh/id_ed25519"
+
+    # Generate key
+    ssh-keygen -a 128 -t ed25519 -C "$intellisys_email" -f "$INTELLISYS_KEY" -N "" >/dev/null 2>&1
+
+    print_success "Chave SSH criada: $INTELLISYS_KEY"
+}
+
+# Configure existing SSH key
+configure_existing_key() {
+    local key_path="$1"
+    local key_name=$(basename "$key_path")
+
+    echo ""
+    print_info "Configurando chave: $key_name"
+    echo "1) GitHub"
+    echo "2) Servidor Remoto"
+    echo "3) Não usar (ignorar)"
+
+    read -r -p "Qual o uso desta chave? (1-3): " key_usage < /dev/tty
+
+    case $key_usage in
+        1)
+            # GitHub
+            read -r -p "Nome/alias para esta chave GitHub (ex: personal, work): " github_alias < /dev/tty
+            add_ssh_config_entry "github-$github_alias" "git" "github.com" "" "$key_path"
+            ;;
+        2)
+            # Servidor Remoto
+            read -r -p "Nome do servidor (alias): " server_alias < /dev/tty
+            read -r -p "Usuário SSH: " ssh_user < /dev/tty
+            read -r -p "Hostname/IP: " ssh_host < /dev/tty
+            read -r -p "Porta SSH (Enter para 22): " ssh_port < /dev/tty
+            ssh_port=${ssh_port:-22}
+
+            add_ssh_config_entry "$server_alias" "$ssh_user" "$ssh_host" "$ssh_port" "$key_path"
+            ;;
+        3)
+            print_info "Chave $key_name será ignorada"
+            ;;
+        *)
+            print_warning "Opção inválida, ignorando chave $key_name"
+            ;;
+    esac
+}
+
+# Create SSH config for GitHub with Intellisys key
+create_ssh_config_github() {
+    local key_path="$1"
+
+    # Backup existing config if exists
+    if [ -f "$HOME/.ssh/config" ]; then
+        cp "$HOME/.ssh/config" "$HOME/.ssh/config.backup.$(date +%Y%m%d%H%M%S)"
+    fi
+
+    # Create or append to config
+    {
+        echo ""
+        echo "# GitHub - Intellisys (default)"
+        echo "Host github.com"
+        echo "    User git"
+        echo "    Hostname github.com"
+        echo "    PreferredAuthentications publickey"
+        echo "    IdentityFile $key_path"
+    } >> "$HOME/.ssh/config"
+
+    chmod 600 "$HOME/.ssh/config"
+}
+
+# Add SSH config entry
+add_ssh_config_entry() {
+    local host="$1"
+    local user="$2"
+    local hostname="$3"
+    local port="$4"
+    local identity_file="$5"
+
+    {
+        echo ""
+        echo "# $host"
+        echo "Host $host"
+        echo "    User $user"
+        echo "    Hostname $hostname"
+        if [ -n "$port" ] && [ "$port" != "22" ]; then
+            echo "    Port $port"
+        fi
+        echo "    PreferredAuthentications publickey"
+        echo "    IdentityFile $identity_file"
+    } >> "$HOME/.ssh/config"
+
+    chmod 600 "$HOME/.ssh/config"
+
+    print_success "Configuração adicionada: $host"
+}
+
+# Show public key
+show_public_key() {
+    local key_path="$1"
+    local pub_key_path="${key_path}.pub"
+
+    if [ -f "$pub_key_path" ]; then
+        echo ""
+        print_header "Chave Pública SSH (adicione no GitHub)"
+        echo ""
+        cat "$pub_key_path"
+        echo ""
+        print_info "Copie a chave acima e adicione em: https://github.com/settings/keys"
+    fi
+}
+
 
 # Show summary
 show_summary() {
@@ -374,11 +693,18 @@ show_summary() {
     echo -e "${GREEN}Ferramentas instaladas:${NC}\n"
 
     if [ "$INSTALL_ESSENTIALS" == true ]; then
+        echo "✓ Zsh $(zsh --version 2>/dev/null || echo 'N/A')"
+        echo "✓ Oh My Zsh $([ -d "$HOME/.oh-my-zsh" ] && echo 'Instalado' || echo 'N/A')"
+        echo "✓ Starship $(starship --version 2>/dev/null || echo 'N/A')"
         echo "✓ Git $(git --version 2>/dev/null || echo 'N/A')"
         echo "✓ Git Flow $(git flow version 2>/dev/null || echo 'N/A')"
         echo "✓ Docker $(docker --version 2>/dev/null || echo 'N/A')"
         echo "✓ curl $(curl --version 2>/dev/null | head -n1 || echo 'N/A')"
+        echo "✓ wget $(wget --version 2>/dev/null | head -n1 || echo 'N/A')"
         echo "✓ vim $(vim --version 2>/dev/null | head -n1 || echo 'N/A')"
+        echo "✓ jq $(jq --version 2>/dev/null || echo 'N/A')"
+        echo "✓ tree $(tree --version 2>/dev/null | head -n1 || echo 'N/A')"
+        echo "✓ htop $(htop --version 2>/dev/null | head -n1 || echo 'N/A')"
     fi
 
     if [ "$INSTALL_REACT" == true ]; then
@@ -403,20 +729,30 @@ show_summary() {
 
     echo -e "\n${YELLOW}Próximos passos:${NC}"
 
+    STEP=1
     if [ "$INSTALL_ESSENTIALS" == true ]; then
-        echo "1. Faça logout e login novamente para usar Docker sem sudo"
+        CURRENT_SHELL=$(basename "$SHELL")
+        if [ "$CURRENT_SHELL" != "zsh" ]; then
+            echo "$STEP. Faça logout e login novamente para usar Zsh e Docker sem sudo"
+            STEP=$((STEP + 1))
+        else
+            echo "$STEP. Faça logout e login novamente para usar Docker sem sudo"
+            STEP=$((STEP + 1))
+        fi
     fi
 
     if [ "$INSTALL_GO" == true ]; then
-        echo "2. Recarregue seu shell: source $SHELL_RC"
+        echo "$STEP. Recarregue seu shell: source $SHELL_RC"
+        STEP=$((STEP + 1))
     fi
 
     if [ "$INSTALL_REACT" == true ]; then
-        echo "3. Crie um projeto React: npm create vite@latest"
+        echo "$STEP. Crie um projeto React: npm create vite@latest"
+        STEP=$((STEP + 1))
     fi
 
     if [ "$INSTALL_GO" == true ]; then
-        echo "4. Teste Go: go version"
+        echo "$STEP. Teste Go: go version"
     fi
 }
 
@@ -434,10 +770,12 @@ main() {
     # Essential tools
     if [ "$INSTALL_ESSENTIALS" == true ]; then
         install_curl
+        install_vim
+        install_additional_tools
+        install_zsh
         install_git
         install_git_flow
         install_docker
-        install_vim
     fi
 
     # ReactJS environment
@@ -453,6 +791,7 @@ main() {
     # Configure Git (ask at the end if not configured)
     if [ "$INSTALL_ESSENTIALS" == true ]; then
         configure_git
+        configure_ssh
     fi
 
     # Show summary
