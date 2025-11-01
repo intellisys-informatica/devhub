@@ -577,10 +577,25 @@ create_intellisys_key() {
 
     INTELLISYS_KEY="$HOME/.ssh/id_ed25519"
 
-    # Generate key
-    ssh-keygen -a 128 -t ed25519 -C "$intellisys_email" -f "$INTELLISYS_KEY" -N "" >/dev/null 2>&1
+    # Check if key already exists
+    if [ -f "$INTELLISYS_KEY" ]; then
+        print_warning "Chave $INTELLISYS_KEY já existe, será sobrescrita"
+        read -r -p "Continuar? (s/n): " overwrite < /dev/tty
+        if [[ ! "$overwrite" =~ ^[Ss]$ ]]; then
+            print_info "Usando chave existente"
+            return
+        fi
+    fi
 
-    print_success "Chave SSH criada: $INTELLISYS_KEY"
+    # Generate key
+    ssh-keygen -a 128 -t ed25519 -C "$intellisys_email" -f "$INTELLISYS_KEY" -N ""
+
+    if [ $? -eq 0 ]; then
+        print_success "Chave SSH criada: $INTELLISYS_KEY"
+    else
+        print_error "Erro ao criar chave SSH"
+        exit 1
+    fi
 }
 
 # Configure existing SSH key
