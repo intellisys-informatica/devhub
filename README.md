@@ -51,8 +51,7 @@ devhub/
 │   ├── padroes/           # Padrões de código
 │   ├── git/               # Git e versionamento
 │   ├── ia/                # Trabalho com IA
-│   ├── config/            # Configurações
-│   └── organizacao/       # Organização de projeto
+│   └── config/            # Configurações
 └── config/                # Templates de configuração
     ├── .vscode/
     ├── .eslintrc.json
