@@ -6,9 +6,9 @@
 
 1. [Nomenclatura](#1-nomenclatura)
 2. [Estrutura de Pastas](#2-estrutura-de-pastas)
-3. [Organização de Código](#3-organiza%C3%A7%C3%A3o-de-c%C3%B3digo)
-4. [Boas Práticas](#4-boas-pr%C3%A1ticas)
-5. [Exemplos Práticos](#5-exemplos-pr%C3%A1ticos)
+3. [Organização de Código](#3-organizacao-de-codigo)
+4. [Boas Práticas](#4-boas-praticas)
+5. [Exemplos Práticos](#5-exemplos-praticos)
 6. [CSS Classes](#6-css-classes)
 7. [Git e Versionamento](#7-git-e-versionamento)
 
