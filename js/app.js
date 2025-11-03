@@ -66,6 +66,15 @@ class App {
             if (e.target.classList.contains('copy-btn')) {
                 this.handleCopyCode(e.target);
             }
+            
+            // Handle internal markdown links
+            if (e.target.tagName === 'A' && e.target.href) {
+                const href = e.target.getAttribute('href');
+                if (href && href.endsWith('.md')) {
+                    e.preventDefault();
+                    this.handleMarkdownLink(href);
+                }
+            }
         });
     }
 
@@ -173,6 +182,66 @@ class App {
         editLink.innerHTML = '✏️ Editar esta página no GitHub';
 
         this.elements.content.appendChild(editLink);
+    }
+
+    /**
+     * Handle internal markdown links
+     * @param {string} href - Link href attribute
+     */
+    handleMarkdownLink(href) {
+        // Get current document path to resolve relative links
+        const currentHash = window.location.hash.slice(1);
+        let basePath = '';
+        
+        if (currentHash) {
+            const currentDoc = this.navigation.getAllDocs().find(d => d.id === currentHash);
+            if (currentDoc && currentDoc.file) {
+                // Get the directory of the current file
+                const lastSlash = currentDoc.file.lastIndexOf('/');
+                if (lastSlash > -1) {
+                    basePath = currentDoc.file.substring(0, lastSlash + 1);
+                }
+            }
+        }
+        
+        // Resolve the full path
+        const fullPath = basePath + href;
+        
+        // Find the document in manifest by file path
+        const targetDoc = this.navigation.getAllDocs().find(d => {
+            return d.file === fullPath || d.file.endsWith(href);
+        });
+        
+        if (targetDoc) {
+            this.navigation.navigateToDoc(targetDoc.id);
+        } else {
+            console.warn('Document not found for link:', href, 'Full path:', fullPath);
+            // Fallback: try to load the file directly
+            this.loadDocumentByPath(fullPath);
+        }
+    }
+
+    /**
+     * Load document by file path (fallback for links not in manifest)
+     * @param {string} filePath - Document file path
+     */
+    async loadDocumentByPath(filePath) {
+        try {
+            this.showLoading();
+            
+            const html = await this.renderer.loadAndRender(`docs/${filePath}`);
+            this.elements.content.innerHTML = html;
+            
+            const toc = this.renderer.extractTOC(html);
+            this.navigation.renderTOC(toc);
+            
+            this.addEditLink(filePath);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+        } catch (error) {
+            console.error('Error loading document by path:', error);
+            this.showError(`Falha ao carregar o documento: ${filePath}`);
+        }
     }
 
     /**
