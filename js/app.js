@@ -71,6 +71,12 @@ class App {
             if (e.target.tagName === 'A' && e.target.href) {
                 const href = e.target.getAttribute('href');
                 if (href && href.endsWith('.md')) {
+                    // Se começa com ./ é um link para assets (download)
+                    if (href.startsWith('./')) {
+                        // Deixa o navegador fazer download normal
+                        return;
+                    }
+                    // Caso contrário, navega internamente
                     e.preventDefault();
                     this.handleMarkdownLink(href);
                 }
