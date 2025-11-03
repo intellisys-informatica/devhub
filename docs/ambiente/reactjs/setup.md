@@ -47,7 +47,7 @@ npm run dev
 
 📥 **[Download do Script](docs/ambiente/reactjs/assets/create-react-vite.sh)**
 
-📖 **[Instruções completas de instalação](./script-install.md)**
+📖 **[Instruções completas de instalação](script-install.md)**
 
 ---
 
