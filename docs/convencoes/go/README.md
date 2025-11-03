@@ -6,7 +6,7 @@
 
 ## 🤖 Diretrizes para Agentes de IA
 
-📥 **[Download: Diretrizes Go para Agentes de IA](docs/convencoes/go/assets/CLAUDE.md)**
+📥 **[Download: Diretrizes Go para Agentes de IA](./CLAUDE.md)**
 
 ---
 
