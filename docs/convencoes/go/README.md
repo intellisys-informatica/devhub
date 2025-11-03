@@ -4,6 +4,12 @@
 
 ---
 
+## 🤖 Diretrizes para Agentes de IA
+
+📥 **[Download: Diretrizes Go para Agentes de IA](docs/convencoes/go/assets/CLAUDE.md)**
+
+---
+
 ## 📖 Introdução
 
 Bem-vindo ao guia de padrões Go Backend. Este material nasceu da análise do projeto **inotify** (sistema de notificações multi-canal) e consolidou práticas de projetos reais com referências da comunidade Go e da indústria.
