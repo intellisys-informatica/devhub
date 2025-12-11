@@ -40,14 +40,10 @@ devhub/
 │   │   ├── boas-praticas.md        # Trabalho com IA
 │   │   └── prompts.md              # Guia de prompts
 │   │
-│   ├── 📁 config/
-│   │   ├── vscode.md               # Configuração VSCode
-│   │   ├── eslint.md               # Configuração ESLint
-│   │   └── prettier.md             # Configuração Prettier
-│   │
-│   └── 📁 organizacao/
-│       ├── estrutura-pastas.md     # Organização de projeto
-│       └── arquitetura.md          # Padrões arquiteturais
+│   └── 📁 config/
+│       ├── vscode.md               # Configuração VSCode
+│       ├── eslint.md               # Configuração ESLint
+│       └── prettier.md             # Configuração Prettier
 │
 ├── 📁 config/                      # Templates de configuração
 │   ├── 📁 .vscode/

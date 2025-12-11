@@ -39,36 +39,99 @@
 			]
 		},
 		{
-			"id": "padroes",
-			"title": "Padrões de Código",
+			"id": "convencoes",
+			"title": "Convenções e Regras",
 			"icon": "📝",
 			"docs": [
 				{
-					"id": "typescript",
+					"id": "reactjs-typescript",
 					"title": "React + TypeScript",
-					"description": "Padrões e convenções para projetos React + TypeScript",
-					"file": "padroes/typescript.md"
+					"description": "Convenções e regras completas para projetos React + TypeScript, incluindo nomenclatura, estrutura, CSS e Git",
+					"file": "convencoes/reactjs-typescript.md"
 				},
 				{
 					"id": "css",
 					"title": "CSS/SCSS",
-					"description": "Padrões para estilização",
-					"file": "padroes/css.md"
-				},
-				{
-					"id": "nomenclatura",
-					"title": "Nomenclatura",
-					"description": "Convenções de nomenclatura de arquivos, variáveis e funções",
-					"file": "padroes/nomenclatura.md"
-				},
-				{
-					"id": "golang",
-					"title": "Go",
-					"description": "Padrões e convenções para Go lang",
-					"file": "padroes/golang.md"
+					"description": "Convenções para estilização",
+					"file": "convencoes/css.md"
 				}
 			],
-			"subcategories": []
+			"subcategories": [
+				{
+					"id": "go",
+					"title": "GO",
+					"icon": "🔷",
+					"docs": [
+						{
+							"id": "go-introducao",
+							"title": "Introdução",
+							"description": "Guia completo de convenções e boas práticas para desenvolvimento em Go",
+							"file": "convencoes/go/README.md"
+						},
+						{
+							"id": "go-nomenclatura",
+							"title": "Nomenclatura",
+							"description": "Padrões de nomenclatura para variáveis, funções, tipos e arquivos",
+							"file": "convencoes/go/01-nomenclatura.md"
+						},
+						{
+							"id": "go-estrutura-pastas",
+							"title": "Estrutura de Pastas",
+							"description": "Organização de diretórios e arquivos em projetos Go",
+							"file": "convencoes/go/02-estrutura-pastas.md"
+						},
+						{
+							"id": "go-organizacao-codigo",
+							"title": "Organização de Código",
+							"description": "Como organizar imports, funções e estruturas no código",
+							"file": "convencoes/go/03-organizacao-codigo.md"
+						},
+						{
+							"id": "go-padroes-design",
+							"title": "Padrões de Design",
+							"description": "Padrões de design aplicados em Go (Repository, Factory, Strategy, etc)",
+							"file": "convencoes/go/04-padroes-design.md"
+						},
+						{
+							"id": "go-boas-praticas",
+							"title": "Boas Práticas",
+							"description": "Práticas recomendadas para código Go idiomático e eficiente",
+							"file": "convencoes/go/05-boas-praticas.md"
+						},
+						{
+							"id": "go-dependencias",
+							"title": "Dependências",
+							"description": "Gerenciamento de módulos e dependências com Go Modules",
+							"file": "convencoes/go/06-dependencias.md"
+						},
+						{
+							"id": "go-exemplo-crud",
+							"title": "Exemplo: CRUD Completo",
+							"description": "Implementação completa de um CRUD com Clean Architecture",
+							"file": "convencoes/go/07-exemplo-crud-completo.md"
+						},
+						{
+							"id": "go-exemplo-orquestracao",
+							"title": "Exemplo: Orquestração",
+							"description": "Exemplo de orquestração avançada com workers e contextos",
+							"file": "convencoes/go/08-exemplo-orquestracao-avancada.md"
+						},
+						{
+							"id": "go-checklist",
+							"title": "Checklist",
+							"description": "Checklist completo para code review de código Go",
+							"file": "convencoes/go/09-checklist.md"
+						},
+						{
+							"id": "go-referencias",
+							"title": "Referências",
+							"description": "Links e recursos para aprofundamento em Go",
+							"file": "convencoes/go/10-referencias.md"
+						}
+					],
+					"subcategories": []
+				}
+			]
 		},
 		{
 			"id": "git",
@@ -126,26 +189,6 @@
 					"title": "Prettier",
 					"description": "Configuração do Prettier para formatação de código",
 					"file": "config/prettier.md"
-				}
-			],
-			"subcategories": []
-		},
-		{
-			"id": "organizacao",
-			"title": "Organização de Projeto",
-			"icon": "📁",
-			"docs": [
-				{
-					"id": "estrutura-pastas",
-					"title": "Estrutura de Pastas",
-					"description": "Como organizar a estrutura de diretórios do projeto",
-					"file": "organizacao/estrutura-pastas.md"
-				},
-				{
-					"id": "arquitetura",
-					"title": "Arquitetura",
-					"description": "Padrões arquiteturais recomendados",
-					"file": "organizacao/arquitetura.md"
 				}
 			],
 			"subcategories": []

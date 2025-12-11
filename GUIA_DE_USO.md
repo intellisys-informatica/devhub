@@ -304,8 +304,7 @@ devhub/
 │   ├── padroes/
 │   ├── git/
 │   ├── ia/
-│   ├── config/
-│   └── organizacao/
+│   └── config/
 ├── config/                # Templates de configuração
 ├── assets/                # Imagens e recursos
 └── README.md
