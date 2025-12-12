@@ -1306,8 +1306,4 @@ Antes de abrir um Pull Request, verifique:
 
 ---
 
-<<<<<<< HEAD:docs/padroes/typescript.md
-**Última atualização:** 10/10/2025 16:25
-=======
-**Última atualização:** 01/11/2025 13:14
->>>>>>> main:docs/convencoes/reactjs-typescript.md
+**Última atualização:** 12/12/2024 14:30
